@@ -3,13 +3,11 @@
 namespace SampleAPI\Data;
 
 use Exception;
-use MongoDB\Driver\Exception\ExecutionTimeoutException;
 use Throwable;
 use Utopia\CLI\Console;
 use Utopia\Database\Database;
 use Utopia\Database\Document;
 use Utopia\Database\Exception\Authorization;
-use Utopia\Database\Exception\Structure;
 use Utopia\Database\Query;
 
 class SimpleORM implements ORM
@@ -58,8 +56,6 @@ class SimpleORM implements ORM
     }
 
     /**
-     * @throws Authorization
-     * @throws Structure
      * @throws Exception
      */
     public function insert(
@@ -70,20 +66,31 @@ class SimpleORM implements ORM
         $tableName = self::toTableName($class);
 
         try {
+            $db->createCollection('collections');
+        } catch (Exception $ex) {
+            Console::log($ex);
+        }
+
+        try {
             $db->getCollection($tableName);
         } catch (Throwable $ex) {
-            Console::error($ex);
+            try {
+                $db->createCollection($tableName);
+            } catch (Throwable $ex) {
+                Console::error($ex);
+            }
 
             foreach ($model->getAttributes() as $attr => $val) {
                 try {
+                    $type = is_numeric($val) ? Database::VAR_INTEGER : Database::VAR_STRING;
                     $db->createAttribute(
                         $tableName,
                         $attr,
-                        is_numeric($val) ? Database::VAR_INTEGER : Database::VAR_STRING,
+                        $type,
                         0,
                         true
                     );
-                }catch (Throwable $th) {
+                } catch (Throwable $th) {
                     Console::error($th);
                 }
             }
@@ -94,14 +101,21 @@ class SimpleORM implements ORM
                 Console::error($ex);
             }
         }
-        return $db->createDocument(
-            $tableName,
-            new Document([
-                $model->getAttributes(),
-                'read' => ['*'],
-                'write' => ['*'],
-            ])
-        );
+        try {
+            $props = array_merge([
+                '$read' => ['role:all'],
+                '$write' => ['role:all'],
+                '$collection' => $tableName,
+            ], $model->getAttributes());
+
+            return $db->createDocument(
+                $tableName,
+                new Document($props)
+            );
+        } catch (Throwable $ex) {
+            Console::error($ex);
+            throw $ex;
+        }
     }
 
     /**
