@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../utopia-sample">
+      <sourceFolder url="file://$MODULE_DIR$/../utopia-sample/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../utopia-sample/src/SampleAPI" isTestSource="false" packagePrefix="SampleAPI\" />
+      <sourceFolder url="file://$MODULE_DIR$/../utopia-sample/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/utopia-php/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/utopia-php/cli" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/utopia-php/database" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/utopia-php/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/utopia-php/preloader" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/jean85/pretty-package-versions" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/symfony/polyfill-php80" />
+      <excludeFolder url="file://$MODULE_DIR$/../utopia-sample/vendor/mongodb/mongodb" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

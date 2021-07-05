@@ -1,0 +1,33 @@
+{
+  "name": "sample/utopia",
+  "description": "Sample notes CRUD using Utopia.",
+  "type": "project",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Jake Barnby",
+      "email": "jake@appwrite.io"
+    }
+  ],
+  "require": {
+    "ext-pdo": "*",
+    "ext-swoole": "*",
+    "utopia-php/framework": "^0.14.1",
+    "utopia-php/database": "^0.4.0",
+    "utopia-php/config": "^0.2.2",
+    "utopia-php/registry": "^0.5.0",
+    "utopia-php/swoole": "^0.2.4",
+    "utopia-php/preloader": "^0.2.4",
+    "utopia-php/cli": "^0.11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SampleAPI\\": "src/SampleAPI"
+    }
+  },
+  "config": {
+    "platform": {
+      "php": "8.0"
+    }
+  }
+}

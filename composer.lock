@@ -1,0 +1,734 @@
+{
+  "_readme": [
+    "This file locks the dependencies of your project to a known state",
+    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+    "This file is @generated automatically"
+  ],
+  "content-hash": "d1825e52323fb0e01daf197cdd2d4c4b",
+  "packages": [
+    {
+      "name": "composer/package-versions-deprecated",
+      "version": "1.11.99.2",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/composer/package-versions-deprecated.git",
+        "reference": "c6522afe5540d5fc46675043d3ed5a45a740b27c"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/composer/package-versions-deprecated/zipball/c6522afe5540d5fc46675043d3ed5a45a740b27c",
+        "reference": "c6522afe5540d5fc46675043d3ed5a45a740b27c",
+        "shasum": ""
+      },
+      "require": {
+        "composer-plugin-api": "^1.1.0 || ^2.0",
+        "php": "^7 || ^8"
+      },
+      "replace": {
+        "ocramius/package-versions": "1.11.99"
+      },
+      "require-dev": {
+        "composer/composer": "^1.9.3 || ^2.0@dev",
+        "ext-zip": "^1.13",
+        "phpunit/phpunit": "^6.5 || ^7"
+      },
+      "type": "composer-plugin",
+      "extra": {
+        "class": "PackageVersions\\Installer",
+        "branch-alias": {
+          "dev-master": "1.x-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "PackageVersions\\": "src/PackageVersions"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Marco Pivetta",
+          "email": "ocramius@gmail.com"
+        },
+        {
+          "name": "Jordi Boggiano",
+          "email": "j.boggiano@seld.be"
+        }
+      ],
+      "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
+      "support": {
+        "issues": "https://github.com/composer/package-versions-deprecated/issues",
+        "source": "https://github.com/composer/package-versions-deprecated/tree/1.11.99.2"
+      },
+      "funding": [
+        {
+          "url": "https://packagist.com",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/composer",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2021-05-24T07:46:03+00:00"
+    },
+    {
+      "name": "jean85/pretty-package-versions",
+      "version": "1.6.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/Jean85/pretty-package-versions.git",
+        "reference": "1e0104b46f045868f11942aea058cd7186d6c303"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/1e0104b46f045868f11942aea058cd7186d6c303",
+        "reference": "1e0104b46f045868f11942aea058cd7186d6c303",
+        "shasum": ""
+      },
+      "require": {
+        "composer/package-versions-deprecated": "^1.8.0",
+        "php": "^7.0|^8.0"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^6.0|^8.5|^9.2"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "1.x-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Jean85\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Alessandro Lai",
+          "email": "alessandro.lai85@gmail.com"
+        }
+      ],
+      "description": "A wrapper for ocramius/package-versions to get pretty versions strings",
+      "keywords": [
+        "composer",
+        "package",
+        "release",
+        "versions"
+      ],
+      "support": {
+        "issues": "https://github.com/Jean85/pretty-package-versions/issues",
+        "source": "https://github.com/Jean85/pretty-package-versions/tree/1.6.0"
+      },
+      "time": "2021-02-04T16:20:16+00:00"
+    },
+    {
+      "name": "mongodb/mongodb",
+      "version": "1.8.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/mongodb/mongo-php-library.git",
+        "reference": "953dbc19443aa9314c44b7217a16873347e6840d"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/953dbc19443aa9314c44b7217a16873347e6840d",
+        "reference": "953dbc19443aa9314c44b7217a16873347e6840d",
+        "shasum": ""
+      },
+      "require": {
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-mongodb": "^1.8.1",
+        "jean85/pretty-package-versions": "^1.2",
+        "php": "^7.0 || ^8.0",
+        "symfony/polyfill-php80": "^1.19"
+      },
+      "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5, <3.5.5",
+        "symfony/phpunit-bridge": "5.x-dev"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "1.8.x-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "MongoDB\\": "src/"
+        },
+        "files": [
+          "src/functions.php"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "Apache-2.0"
+      ],
+      "authors": [
+        {
+          "name": "Andreas Braun",
+          "email": "andreas.braun@mongodb.com"
+        },
+        {
+          "name": "Jeremy Mikola",
+          "email": "jmikola@gmail.com"
+        }
+      ],
+      "description": "MongoDB driver library",
+      "homepage": "https://jira.mongodb.org/browse/PHPLIB",
+      "keywords": [
+        "database",
+        "driver",
+        "mongodb",
+        "persistence"
+      ],
+      "support": {
+        "issues": "https://github.com/mongodb/mongo-php-library/issues",
+        "source": "https://github.com/mongodb/mongo-php-library/tree/1.8.0"
+      },
+      "time": "2020-11-25T12:26:02+00:00"
+    },
+    {
+      "name": "symfony/polyfill-php80",
+      "version": "v1.23.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/polyfill-php80.git",
+        "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/eca0bf41ed421bed1b57c4958bab16aa86b757d0",
+        "reference": "eca0bf41ed421bed1b57c4958bab16aa86b757d0",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.1"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-main": "1.23-dev"
+        },
+        "thanks": {
+          "name": "symfony/polyfill",
+          "url": "https://github.com/symfony/polyfill"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Symfony\\Polyfill\\Php80\\": ""
+        },
+        "files": [
+          "bootstrap.php"
+        ],
+        "classmap": [
+          "Resources/stubs"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Ion Bazan",
+          "email": "ion.bazan@gmail.com"
+        },
+        {
+          "name": "Nicolas Grekas",
+          "email": "p@tchwork.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+      "homepage": "https://symfony.com",
+      "keywords": [
+        "compatibility",
+        "polyfill",
+        "portable",
+        "shim"
+      ],
+      "support": {
+        "source": "https://github.com/symfony/polyfill-php80/tree/v1.23.0"
+      },
+      "funding": [
+        {
+          "url": "https://symfony.com/sponsor",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/fabpot",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2021-02-19T12:13:01+00:00"
+    },
+    {
+      "name": "utopia-php/cache",
+      "version": "0.4.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/cache.git",
+        "reference": "8c48eff73219c8c1ac2807909f0a38f3480c8938"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/cache/zipball/8c48eff73219c8c1ac2807909f0a38f3480c8938",
+        "reference": "8c48eff73219c8c1ac2807909f0a38f3480c8938",
+        "shasum": ""
+      },
+      "require": {
+        "ext-json": "*",
+        "ext-redis": "*",
+        "php": ">=7.4"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\Cache\\": "src/Cache"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "eldad@appwrite.io"
+        }
+      ],
+      "description": "A simple cache library to manage application cache storing, loading and purging",
+      "keywords": [
+        "cache",
+        "framework",
+        "php",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/cache/issues",
+        "source": "https://github.com/utopia-php/cache/tree/0.4.1"
+      },
+      "time": "2021-04-29T18:41:43+00:00"
+    },
+    {
+      "name": "utopia-php/cli",
+      "version": "0.11.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/cli.git",
+        "reference": "c7a6908a8dbe9234b8b2c954e5487d34cb079af6"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/cli/zipball/c7a6908a8dbe9234b8b2c954e5487d34cb079af6",
+        "reference": "c7a6908a8dbe9234b8b2c954e5487d34cb079af6",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.4",
+        "utopia-php/framework": "0.*.*"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\CLI\\": "src/CLI"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "eldad@appwrite.io"
+        }
+      ],
+      "description": "A simple CLI library to manage command line applications",
+      "keywords": [
+        "cli",
+        "command line",
+        "framework",
+        "php",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/cli/issues",
+        "source": "https://github.com/utopia-php/cli/tree/0.11.0"
+      },
+      "time": "2021-04-16T15:16:08+00:00"
+    },
+    {
+      "name": "utopia-php/config",
+      "version": "0.2.2",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/config.git",
+        "reference": "a3d7bc0312d7150d5e04b1362dc34b2b136908cc"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/config/zipball/a3d7bc0312d7150d5e04b1362dc34b2b136908cc",
+        "reference": "a3d7bc0312d7150d5e04b1362dc34b2b136908cc",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.3"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\Config\\": "src/Config"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "eldad@appwrite.io"
+        }
+      ],
+      "description": "A simple Config library to managing application config variables",
+      "keywords": [
+        "config",
+        "framework",
+        "php",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/config/issues",
+        "source": "https://github.com/utopia-php/config/tree/0.2.2"
+      },
+      "time": "2020-10-24T09:49:09+00:00"
+    },
+    {
+      "name": "utopia-php/database",
+      "version": "0.4.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/database.git",
+        "reference": "0b59d09a6622b472f82013623fd44e2b1b5504db"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/database/zipball/0b59d09a6622b472f82013623fd44e2b1b5504db",
+        "reference": "0b59d09a6622b472f82013623fd44e2b1b5504db",
+        "shasum": ""
+      },
+      "require": {
+        "ext-mongodb": "*",
+        "ext-pdo": "*",
+        "ext-redis": "*",
+        "mongodb/mongodb": "1.8.0",
+        "php": ">=7.1",
+        "utopia-php/cache": "0.4.*",
+        "utopia-php/framework": "0.*.*"
+      },
+      "require-dev": {
+        "fakerphp/faker": "^1.14",
+        "phpunit/phpunit": "^9.4",
+        "utopia-php/cli": "^0.11.0",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\Database\\": "src/Database"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "eldad@appwrite.io"
+        },
+        {
+          "name": "Brandon Leckemby",
+          "email": "brandon@appwrite.io"
+        }
+      ],
+      "description": "A simple library to manage application persistency using multiple database adapters",
+      "keywords": [
+        "database",
+        "framework",
+        "php",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/database/issues",
+        "source": "https://github.com/utopia-php/database/tree/0.4.0"
+      },
+      "time": "2021-06-29T15:52:49+00:00"
+    },
+    {
+      "name": "utopia-php/framework",
+      "version": "0.14.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/framework.git",
+        "reference": "632113288bebe41cbef79f0d355bd91609767b8c"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/framework/zipball/632113288bebe41cbef79f0d355bd91609767b8c",
+        "reference": "632113288bebe41cbef79f0d355bd91609767b8c",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.3.0"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.4",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "eldad@appwrite.io"
+        }
+      ],
+      "description": "A simple, light and advanced PHP framework",
+      "keywords": [
+        "framework",
+        "php",
+        "upf"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/framework/issues",
+        "source": "https://github.com/utopia-php/framework/tree/0.14.1"
+      },
+      "time": "2021-05-21T06:41:45+00:00"
+    },
+    {
+      "name": "utopia-php/preloader",
+      "version": "0.2.4",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/preloader.git",
+        "reference": "65ef48392e72172f584b0baa2e224f9a1cebcce0"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/preloader/zipball/65ef48392e72172f584b0baa2e224f9a1cebcce0",
+        "reference": "65ef48392e72172f584b0baa2e224f9a1cebcce0",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.1"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\Preloader\\": "src/Preloader"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "team@appwrite.io"
+        }
+      ],
+      "description": "Utopia Preloader library is simple and lite library for managing PHP preloading configuration",
+      "keywords": [
+        "framework",
+        "php",
+        "preload",
+        "preloader",
+        "preloading",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/preloader/issues",
+        "source": "https://github.com/utopia-php/preloader/tree/0.2.4"
+      },
+      "time": "2020-10-24T07:04:59+00:00"
+    },
+    {
+      "name": "utopia-php/registry",
+      "version": "0.5.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/registry.git",
+        "reference": "bedc4ed54527b2803e6dfdccc39449f98522b70d"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/registry/zipball/bedc4ed54527b2803e6dfdccc39449f98522b70d",
+        "reference": "bedc4ed54527b2803e6dfdccc39449f98522b70d",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=7.4"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\Registry\\": "src/Registry"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "eldad@appwrite.io"
+        }
+      ],
+      "description": "A simple dependency management library for PHP",
+      "keywords": [
+        "dependency management",
+        "di",
+        "framework",
+        "php",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/registry/issues",
+        "source": "https://github.com/utopia-php/registry/tree/0.5.0"
+      },
+      "time": "2021-03-10T10:45:22+00:00"
+    },
+    {
+      "name": "utopia-php/swoole",
+      "version": "0.2.4",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/utopia-php/swoole.git",
+        "reference": "37d8c64b536d6bc7da4f0f5a934a0ec44885abf4"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/utopia-php/swoole/zipball/37d8c64b536d6bc7da4f0f5a934a0ec44885abf4",
+        "reference": "37d8c64b536d6bc7da4f0f5a934a0ec44885abf4",
+        "shasum": ""
+      },
+      "require": {
+        "ext-swoole": "*",
+        "php": ">=7.4",
+        "utopia-php/framework": "0.*.*"
+      },
+      "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "swoole/ide-helper": "4.5.5",
+        "vimeo/psalm": "4.0.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Utopia\\Swoole\\": "src/Swoole"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Eldad Fux",
+          "email": "team@appwrite.io"
+        }
+      ],
+      "description": "An extension for Utopia Framework to work with PHP Swoole as a PHP FPM alternative",
+      "keywords": [
+        "framework",
+        "http",
+        "php",
+        "server",
+        "swoole",
+        "upf",
+        "utopia"
+      ],
+      "support": {
+        "issues": "https://github.com/utopia-php/swoole/issues",
+        "source": "https://github.com/utopia-php/swoole/tree/0.2.4"
+      },
+      "time": "2021-06-22T10:49:24+00:00"
+    }
+  ],
+  "packages-dev": [],
+  "aliases": [],
+  "minimum-stability": "stable",
+  "stability-flags": [],
+  "prefer-stable": false,
+  "prefer-lowest": false,
+  "platform": {
+    "ext-pdo": "*",
+    "ext-swoole": "*"
+  },
+  "platform-dev": [],
+  "platform-overrides": {
+    "php": "8.0"
+  },
+  "plugin-api-version": "2.1.0"
+}
