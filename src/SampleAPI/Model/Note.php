@@ -65,10 +65,6 @@ class Note extends Model
         ];
     }
 
-    #[ArrayShape([
-        'title' => 'string',
-        'body' => 'string'
-    ])]
     public function getAttributes(): array
     {
         return [

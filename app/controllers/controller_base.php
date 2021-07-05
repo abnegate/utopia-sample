@@ -1,5 +1,6 @@
 <?php
 
+use Utopia\CLI\Console;
 use Utopia\Response;
 
 /**
@@ -7,6 +8,8 @@ use Utopia\Response;
  */
 function handleError(Throwable $ex, Response &$response)
 {
+    Console::error($ex);
+
     $response->json(['errors' => [[
         'title' => $ex->getMessage(),
         'detail' => $ex->getTraceAsString()

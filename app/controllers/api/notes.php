@@ -78,7 +78,7 @@ App::get('/v1/note/:noteId')
         ]));
     });
 
-App::put('/api/v1/note')
+App::put('/v1/note')
     ->desc('Update a note.')
     ->groups([TABLE])
     ->param('noteId', '', new UID(), 'Note unique ID.')
@@ -97,14 +97,9 @@ App::put('/api/v1/note')
         ORM $orm,
         Database $db
     ) {
-        /** @var Model $note */
+        /** @var Note $note */
 
-        try {
-            $note = $orm->findById($db, Note::class, $noteId);
-        } catch (Throwable $ex) {
-            handleError($ex, $response);
-            return;
-        }
+        $note = $orm->findById($db, Note::class, $noteId);
 
         if (null === $note) {
             $note = new Note($noteId, $title, $body);
@@ -120,7 +115,7 @@ App::put('/api/v1/note')
         ]));
     });
 
-App::post('/api/v1/note')
+App::post('/v1/note')
     ->desc('Add a new note.')
     ->groups([TABLE])
     ->param('title', '', new Text(128), 'Note title. Max length: 128 chars.')
@@ -151,7 +146,7 @@ App::post('/api/v1/note')
         ]));
     });
 
-App::patch('/api/v1/note/:noteId')
+App::patch('/v1/note/:noteId')
     ->desc('Update a note attribute.')
     ->groups([TABLE])
     ->param('noteId', new UID(), new UID(), 'Note unique ID.')
@@ -196,7 +191,7 @@ App::patch('/api/v1/note/:noteId')
         ]));
     });
 
-App::delete('/api/v1/note/:noteId')
+App::delete('/v1/note/:noteId')
     ->groups([TABLE])
     ->param('noteId', '', new UID(), 'Note unique ID.')
     ->inject('request')

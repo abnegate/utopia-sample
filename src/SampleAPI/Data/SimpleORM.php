@@ -3,6 +3,9 @@
 namespace SampleAPI\Data;
 
 use Exception;
+use MongoDB\Driver\Exception\ExecutionTimeoutException;
+use Throwable;
+use Utopia\CLI\Console;
 use Utopia\Database\Database;
 use Utopia\Database\Document;
 use Utopia\Database\Exception\Authorization;
@@ -44,7 +47,7 @@ class SimpleORM implements ORM
         int $order = SortOrder::ASCENDING
     ): array
     {
-        $tableName = $this->toTableName($class);
+        $tableName = self::toTableName($class);
 
         return $db->find(
             $tableName,
@@ -64,14 +67,40 @@ class SimpleORM implements ORM
         string $class,
         Model $model): Document
     {
-        $collection = $db->getCollection($class);
-        if (null === $collection) {
-            $db->createCollection($class);
-        }
+        $tableName = self::toTableName($class);
 
+        try {
+            $db->getCollection($tableName);
+        } catch (Throwable $ex) {
+            Console::error($ex);
+
+            foreach ($model->getAttributes() as $attr => $val) {
+                try {
+                    $db->createAttribute(
+                        $tableName,
+                        $attr,
+                        is_numeric($val) ? Database::VAR_INTEGER : Database::VAR_STRING,
+                        0,
+                        true
+                    );
+                }catch (Throwable $th) {
+                    Console::error($th);
+                }
+            }
+
+            try {
+                $db->createCollection($tableName);
+            } catch (Throwable $ex) {
+                Console::error($ex);
+            }
+        }
         return $db->createDocument(
-            $this->toTableName($class),
-            new Document($model->getAttributes())
+            $tableName,
+            new Document([
+                $model->getAttributes(),
+                'read' => ['*'],
+                'write' => ['*'],
+            ])
         );
     }
 
@@ -85,7 +114,7 @@ class SimpleORM implements ORM
     ): Document
     {
         return $db->updateDocument(
-            $this->toTableName($class),
+            self::toTableName($class),
             $model->getId(),
             new Document([
                 $model->getAttributes()
@@ -103,7 +132,7 @@ class SimpleORM implements ORM
     ): bool
     {
         return $db->deleteDocument(
-            $this->toTableName($class),
+            self::toTableName($class),
             $id
         );
     }
