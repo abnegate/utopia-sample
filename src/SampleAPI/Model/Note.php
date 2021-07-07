@@ -2,13 +2,12 @@
 
 namespace SampleAPI\Model;
 
-use JetBrains\PhpStorm\ArrayShape;
 use SampleAPI\Data\Model;
 
 class Note extends Model
 {
     public function __construct(
-        protected object $id,
+        protected $id,
         public string $title,
         public string $body
     )
@@ -46,23 +45,6 @@ class Note extends Model
     public function setBody(string $body): void
     {
         $this->body = $body;
-    }
-
-    #[ArrayShape([
-        'id' => 'object',
-        'type' => 'string',
-        'attributes' => 'array',
-        'relationships' => 'array',
-        'meta' => 'array',
-        'links' => 'array'
-    ])]
-    public function getJSONAPI(): array
-    {
-        return [
-            'id' => $this->getId(),
-            'type' => $this->getJsonType(),
-            'attributes' => $this->getAttributes()
-        ];
     }
 
     public function getAttributes(): array

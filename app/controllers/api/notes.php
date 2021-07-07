@@ -4,7 +4,8 @@ use SampleAPI\Data\Model;
 use SampleAPI\Data\ORM;
 use SampleAPI\Model\Note;
 use Utopia\App;
-use Utopia\Database\Database;
+use Utopia\CLI\Console;
+use Utopia\Database\Document;
 use Utopia\Database\Validator\UID;
 use Utopia\Request;
 use Utopia\Response;
@@ -21,85 +22,78 @@ App::get('/v1/note')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
-    ->inject('db')
     ->action(function (
         Request $request,
         Response $response,
         ORM $orm,
-        Database $db
     ) {
         try {
-            $notes = $orm->find($db, Note::class);
+            $notes = $orm->find(Note::class);
         } catch (Throwable $e) {
             handleError($e, $response);
             return;
         }
 
-        $jsonNotes = array_map(function (Model $item) {
-            return $item->getJSONAPI();
-        }, $notes);
+        try {
+            $jsonNotes = array_map(function (Note $item) {
+                return $item->getJSONAPI();
+            }, $notes);
 
-        $response->json([
-            'data' => $jsonNotes
-        ]);
+            $response->json([
+                'data' => $jsonNotes
+            ]);
+        } catch (Throwable $ex) {
+            Console::error($ex);
+        }
     });
 
 App::get('/v1/note/:noteId')
     ->desc('Get a note by ID.')
     ->groups([TABLE])
-    ->param('noteId', '', new UID(), 'Note unique ID.')
+    ->param('noteId', null, new UID(), 'Note unique ID.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
-    ->inject('db')
     ->action(function (
-        object $noteId,
-        array $fields,
+        $noteId,
         Request $request,
         Response $response,
         ORM $orm,
-        Database $db
     ) {
         /** @var Note $note */
 
         try {
-            $note = $orm->findById($db, Note::class, $noteId);
+            $note = $orm->findById(Note::class, $noteId);
         } catch (Throwable $ex) {
             handleError($ex, $response);
             return;
         }
 
-        if (null === $note) {
-            throw new InvalidArgumentException('Note with ID' . $noteId . ' does not exist.');
-        }
-
-        $response->json(json_encode([
+        $response->json([
             'data' => [$note->getJSONAPI()]
-        ]));
+        ]);
     });
 
-App::put('/v1/note')
+App::put('/v1/note/:noteId')
     ->desc('Update a note.')
     ->groups([TABLE])
     ->param('noteId', '', new UID(), 'Note unique ID.')
-    ->param('title', '', new Text(128), 'Note title. Max length: 128 chars.')
+    ->param('title', '', new Text(5000), 'Note title. Max length: 5000 chars.')
     ->param('body', '', new Text(MB_AS_BYTES), 'Note body. Max length: 1048576 chars.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
-    ->inject('db')
     ->action(function (
-        object $noteId,
+        $noteId,
         string $title,
         string $body,
         Request $request,
         Response $response,
         ORM $orm,
-        Database $db
     ) {
         /** @var Note $note */
 
-        $note = $orm->findById($db, Note::class, $noteId);
+        $note = $orm->findById(Note::class, $noteId);
 
         if (null === $note) {
             $note = new Note($noteId, $title, $body);
@@ -108,66 +102,69 @@ App::put('/v1/note')
             $note->setBody($body);
         }
 
-        $orm->update($db, Note::class, $note);
+        $orm->update($note);
 
-        $response->json(json_encode([
+        $response->json([
             'data' => [$note->getJSONAPI()]
-        ]));
+        ]);
     });
 
 App::post('/v1/note')
     ->desc('Add a new note.')
     ->groups([TABLE])
-    ->param('title', '', new Text(128), 'Note title. Max length: 128 chars.')
-    ->param('body', '', new Text(MB_AS_BYTES), 'Note body. Max length: 1048576 chars.')
+    ->param('title', '', new Text(1024), 'Note title. Max length: 128 chars.')
+    ->param('body', '', new Text(0), 'Note body.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
-    ->inject('db')
     ->action(function (
         string $title,
         string $body,
         Request $request,
         Response $response,
-        ORM $orm,
-        Database $db
+        ORM $orm
     ) {
-        $note = new Note(new UID(), $title, $body);
+        $note = new Note('', $title, $body);
 
         try {
-            $orm->insert($db, Note::class, $note);
+            /** @var Document $noteDocument */
+            $noteDocument = $orm->insert($note);
         } catch (Throwable $ex) {
             handleError($ex, $response);
             return;
         }
 
-        $response->json(json_encode([
-            'data' => [$note->getJSONAPI()]
-        ]));
+        try {
+            $response->json([
+                'data' => [
+                    $note->getJSONAPIWithId($noteDocument->getId())
+                ]
+            ]);
+        } catch (Throwable $ex) {
+            Console::log($ex);
+        }
     });
 
 App::patch('/v1/note/:noteId')
     ->desc('Update a note attribute.')
     ->groups([TABLE])
     ->param('noteId', new UID(), new UID(), 'Note unique ID.')
-    ->param('key', '', new UID(), 'Note title.')
-    ->param('value', '', new UID(), 'Note title.')
+    ->param('key', '', new Text(0), 'Note title.')
+    ->param('value', '', new Text(0), 'Note title.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
-    ->inject('db')
     ->action(function (
-        object $noteId,
+        $noteId,
         string $key,
         string $value,
         Request $request,
         Response $response,
         ORM $orm,
-        Database $db
     ) {
         /** @var Model $note */
         try {
-            $note = $orm->findById($db, Note::class, $noteId);
+            $note = $orm->findById(Note::class, $noteId);
         } catch (Exception $ex) {
             handleError($ex, $response);
             return;
@@ -180,7 +177,7 @@ App::patch('/v1/note/:noteId')
         $note[$key] = $value;
 
         try {
-            $orm->update($db, Note::class, $note);
+            $orm->update($note);
         } catch (Exception $ex) {
             handleError($ex, $response);
             return;
@@ -197,22 +194,18 @@ App::delete('/v1/note/:noteId')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
-    ->inject('db')
     ->action(function (
-        object $noteId,
+        $noteId,
         Request $request,
         Response $response,
         ORM $orm,
-        Database $db
     ) {
         try {
-            $success = $orm->delete($db, Note::class, $noteId);
+            $orm->delete(Note::class, $noteId);
         } catch (Exception $ex) {
             handleError($ex, $response);
             return;
         }
 
-        $response
-            ->setStatusCode($success ? 200 : 400)
-            ->send();
+        $response->noContent();
     });

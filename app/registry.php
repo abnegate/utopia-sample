@@ -4,7 +4,7 @@ use SampleAPI\Data\SimpleORM;
 use Swoole\Database\PDOConfig;
 use Swoole\Database\PDOPool;
 use Utopia\App;
-use Utopia\Cache\Adapter\Filesystem;
+use Utopia\Cache\Adapter\None;
 use Utopia\Cache\Cache;
 use Utopia\Database\Adapter\MariaDB;
 use Utopia\Database\Database;
@@ -28,21 +28,23 @@ $registry->set('dbPool', function () {
     );
 });
 
-$registry->set('db', function () use ($registry) {
+$registry->set('orm', function () use ($registry) {
     $dbScheme = App::getEnv('_APP_DB_SCHEMA', 'test');
 
-    /** @var PDO $pdo */
-    $pdo = $registry->get('dbPool')->get();
-    $cache = new Cache(new Filesystem('.'));
-    $database = new Database(new MariaDB($pdo), $cache);
+    // To fix dependency cycle with dbPool
+    $pdo = new PDO("mysql:host=localhost;port=3306;charset=utf8mb4", 'root', '', [
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
+        PDO::ATTR_TIMEOUT => 3, // Seconds
+        PDO::ATTR_PERSISTENT => true,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    ]);
+    $database = new Database(
+        new MariaDB($pdo),
+        new Cache(new None())
+    );
     $database->setNamespace($dbScheme);
     $database->exists() || $database->create();
 
-    return $database;
-});
-
-$registry->set('orm', function () {
-    $schema = App::getEnv('_APP_DB_SCHEMA', 'test');
-
-    return new SimpleORM($schema);
+    return new SimpleORM($database, $dbScheme);
 });

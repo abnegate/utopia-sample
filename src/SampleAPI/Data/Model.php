@@ -7,7 +7,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 abstract class Model extends ArrayObject
 {
-    protected object $id;
+    protected $id;
     protected string $table;
     protected string $jsonType;
 
@@ -24,19 +24,33 @@ abstract class Model extends ArrayObject
     }
 
     /**
-     * @return object
-     */
-    public function getId(): object
-    {
-        return $this->id;
-    }
-
-    /**
      * @return string
      */
     public function getTable(): string
     {
         return $this->table;
+    }
+
+    #[ArrayShape([
+        'id' => 'object',
+        'type' => 'string',
+        'attributes' => 'array',
+        'relationships' => 'array',
+        'meta' => 'array',
+        'links' => 'array'
+    ])]
+    public function getJSONAPI(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'type' => $this->getJsonType(),
+            'attributes' => $this->getAttributes()
+        ];
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -54,11 +68,6 @@ abstract class Model extends ArrayObject
      */
     public abstract function getAttributes(): array;
 
-    /**
-     * Get an array of JSONAPI Model property keys and values.
-     *
-     * @return array
-     */
     #[ArrayShape([
         'id' => 'object',
         'type' => 'string',
@@ -67,5 +76,12 @@ abstract class Model extends ArrayObject
         'meta' => 'array',
         'links' => 'array'
     ])]
-    public abstract function getJSONAPI(): array;
+    public function getJSONAPIWithId($id): array
+    {
+        return [
+            'id' => $id,
+            'type' => $this->getJsonType(),
+            'attributes' => $this->getAttributes()
+        ];
+    }
 }

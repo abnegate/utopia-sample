@@ -2,13 +2,7 @@
 
 namespace SampleAPI\Data;
 
-use Utopia\Database\Database;
-
 interface InsertableDataSource
 {
-    public function insert(
-        Database $db,
-        string $class,
-        Model $model
-    );
+    public function insert(Model $model);
 }

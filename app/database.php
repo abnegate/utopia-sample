@@ -3,13 +3,13 @@
 use Utopia\Database\Database;
 
 Database::addFilter('json',
-    function ($value) {
+    encode: function ($value) {
         if (!is_array($value)) {
             return $value;
         }
         return json_encode($value);
     },
-    function ($value) {
+    decode: function ($value) {
         return json_decode($value, true);
     }
 );

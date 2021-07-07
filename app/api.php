@@ -5,7 +5,6 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 
 use SampleAPI\Data\SimpleORM;
-use Swoole\Database\PDOPool;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Http\Server;
@@ -48,14 +47,10 @@ $http->on('request', function (
     /** @var Database $db */
 
     $app = new App('Pacific/Auckland');
-    $db = $registry->get('db');
     $orm = $registry->get('orm');
 
     App::setResource('app', function () use (&$app) {
         return $app;
-    });
-    App::setResource('db', function () use (&$db) {
-        return $db;
     });
     App::setResource('orm', function () use (&$orm) {
         return $orm;
@@ -65,10 +60,6 @@ $http->on('request', function (
         $app->run($request, $response);
     } catch (Throwable $th) {
         $swooleResponse->end('500: Server Error: ' . $th->getMessage());
-    } finally {
-        /** @var PDOPool $dbPool */
-        $dbPool = $registry->get('dbPool');
-        $dbPool->put($db);
     }
 });
 
