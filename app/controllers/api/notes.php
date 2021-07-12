@@ -29,22 +29,23 @@ App::get('/v1/note')
     ) {
         try {
             $notes = $orm->find(Note::class);
-        } catch (Throwable $e) {
-            handleError($e, $response);
+        } catch (Throwable $ex) {
+            $response->json(['data' => []]);
             return;
         }
 
-        try {
-            $jsonNotes = array_map(function (Note $item) {
-                return $item->getJSONAPI();
-            }, $notes);
-
-            $response->json([
-                'data' => $jsonNotes
-            ]);
-        } catch (Throwable $ex) {
-            Console::error($ex);
+        if (!$notes) {
+            $response->json(['data' => []]);
+            return;
         }
+
+        $jsonNotes = array_map(function (Note $item) {
+            return $item->getJSONAPI();
+        }, $notes);
+
+        $response->json([
+            'data' => $jsonNotes
+        ]);
     });
 
 App::get('/v1/note/:noteId')
@@ -69,6 +70,14 @@ App::get('/v1/note/:noteId')
             return;
         }
 
+        if (!$note) {
+            handleError(
+                new Exception('Note with ID ' . $noteId . ' does not exist.'),
+                $response
+            );
+            return;
+        }
+
         $response->json([
             'data' => [$note->getJSONAPI()]
         ]);
@@ -77,7 +86,7 @@ App::get('/v1/note/:noteId')
 App::put('/v1/note/:noteId')
     ->desc('Update a note.')
     ->groups([TABLE])
-    ->param('noteId', '', new UID(), 'Note unique ID.')
+    ->param('noteId', null, new UID(), 'Note unique ID.')
     ->param('title', '', new Text(5000), 'Note title. Max length: 5000 chars.')
     ->param('body', '', new Text(MB_AS_BYTES), 'Note body. Max length: 1048576 chars.')
     ->inject('request')
@@ -95,14 +104,14 @@ App::put('/v1/note/:noteId')
 
         $note = $orm->findById(Note::class, $noteId);
 
-        if (null === $note) {
+        if (!$note) {
             $note = new Note($noteId, $title, $body);
+            $orm->insert($note);
         } else {
             $note->setTitle($title);
             $note->setBody($body);
+            $orm->update($note);
         }
-
-        $orm->update($note);
 
         $response->json([
             'data' => [$note->getJSONAPI()]
@@ -127,30 +136,24 @@ App::post('/v1/note')
         $note = new Note('', $title, $body);
 
         try {
-            /** @var Document $noteDocument */
-            $noteDocument = $orm->insert($note);
+            /** @var Document $noteDoc */
+            $noteDoc = $orm->insert($note);
         } catch (Throwable $ex) {
             handleError($ex, $response);
             return;
         }
 
-        try {
-            $response->json([
-                'data' => [
-                    $note->getJSONAPIWithId($noteDocument->getId())
-                ]
-            ]);
-        } catch (Throwable $ex) {
-            Console::log($ex);
-        }
+        $response->json([
+            'data' => [$note->getJSONAPIWithId($noteDoc->getId())]
+        ]);
     });
 
 App::patch('/v1/note/:noteId')
     ->desc('Update a note attribute.')
     ->groups([TABLE])
-    ->param('noteId', new UID(), new UID(), 'Note unique ID.')
-    ->param('key', '', new Text(0), 'Note title.')
-    ->param('value', '', new Text(0), 'Note title.')
+    ->param('noteId', null, new UID(), 'Note unique ID.')
+    ->param('key', '', new Text(0), 'Attribute key.')
+    ->param('value', '', new Text(0), 'Atrribute value.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
@@ -170,22 +173,24 @@ App::patch('/v1/note/:noteId')
             return;
         }
 
-        if (null === $note) {
-            throw new InvalidArgumentException('Note with ID' . $noteId . ' does not exist.');
+        if (!$note) {
+            handleError(
+                new Exception('Note with ID ' . $noteId . ' does not exist.'),
+                $response
+            );
+            return;
         }
 
-        $note[$key] = $value;
-
         try {
+            $setter = 'set'.ucfirst($key);
+            $note->$setter($value);
             $orm->update($note);
         } catch (Exception $ex) {
             handleError($ex, $response);
             return;
         }
 
-        $response->json(json_encode([
-            'data' => [$note->getJSONAPI()]
-        ]));
+        $response->json(['data' => [$note->getJSONAPI()]]);
     });
 
 App::delete('/v1/note/:noteId')
