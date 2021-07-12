@@ -11,7 +11,6 @@ use Swoole\Http\Server;
 use Swoole\Process;
 use Utopia\App;
 use Utopia\CLI\Console;
-use Utopia\Database\Database;
 
 include __DIR__ . '/registry.php';
 include __DIR__ . '/database.php';
@@ -26,11 +25,11 @@ App::error(function (Throwable $error) {
     Console::error(json_encode($error));
 });
 
-$http = new Server('0.0.0.0', App::getEnv('_APP_PORT', 80));
+$http = new Server('0.0.0.0', App::getEnv('_APP_PORT', 8005));
 
 $http->on('start', function (Server $http) {
+    Console::log('Stop with Ctrl+C');
     Process::signal(2, function () use ($http) {
-        Console::log('Stop by Ctrl + C');
         $http->shutdown();
     });
 });
@@ -44,7 +43,6 @@ $http->on('request', function (
 
     /** @var App $app */
     /** @var SimpleORM $orm */
-    /** @var Database $db */
 
     $app = new App('Pacific/Auckland');
     $orm = $registry->get('orm');
@@ -58,8 +56,8 @@ $http->on('request', function (
 
     try {
         $app->run($request, $response);
-    } catch (Throwable $th) {
-        $swooleResponse->end('500: Server Error: ' . $th->getMessage());
+    } catch (Throwable) {
+        $swooleResponse->end('500: Server Error');
     }
 });
 
