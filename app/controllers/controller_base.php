@@ -6,7 +6,7 @@ use Utopia\Response;
 /**
  * @throws Exception
  */
-function handleError(Throwable $ex, Response &$response)
+function handleError(Throwable $ex, Response $response)
 {
     Console::error($ex);
 
