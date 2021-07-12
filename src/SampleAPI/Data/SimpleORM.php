@@ -3,6 +3,7 @@
 namespace SampleAPI\Data;
 
 use Exception;
+use SampleAPI\Strings;
 use Throwable;
 use Utopia\CLI\Console;
 use Utopia\Database\Database;
@@ -31,20 +32,28 @@ class SimpleORM implements ORM
         int $order = SortOrder::ASCENDING
     )
     {
-        $tableName = self::toTableName($class);
+        $doc = $this->findDoc($class, $id);
+        if (!$doc) {
+            return null;
+        }
+
+        $props = $doc->getAttributes();
+        $props['id'] = $doc->getId();
+        return new $class(...$props);
+    }
+
+    private function findDoc(string $class, $id)
+    {
+        $tableName = Strings::classToTableName($class);
 
         try {
-            $doc = $this->db->getDocument(
+            return $this->db->getDocument(
                 $tableName,
                 $id
             );
         } catch (Throwable $ex) {
             Console::error($ex);
         }
-
-        $props = $doc->getAttributes();
-        $props['id'] = $doc->getId();
-        return new $class(...$props);
     }
 
     public function find(
@@ -55,7 +64,7 @@ class SimpleORM implements ORM
         int $order = SortOrder::ASCENDING
     ): array
     {
-        $tableName = self::toTableName($class);
+        $tableName = Strings::classToTableName($class);
 
         $docs = $this->db->find(
             $tableName,
@@ -71,39 +80,14 @@ class SimpleORM implements ORM
         }, $docs);
     }
 
-    private static function toTableName(string $class): string
-    {
-        $parts = explode('\\', $class);
-        return strtolower(end($parts));
-    }
-
     /**
      * @throws Exception|Throwable
      */
     public function insert(Model $model)
     {
-        $tableName = self::toTableName($model::class);
+        $tableName = Strings::classToTableName($model::class);
 
-        try {
-            $this->db->createCollection($tableName);
-
-            // FIXME: Stop this from adding duplicates
-            foreach ($model->getAttributes() as $attr => $val) {
-                $type = is_numeric($val)
-                    ? Database::VAR_INTEGER
-                    : Database::VAR_STRING;
-
-                $this->db->createAttribute(
-                    $tableName,
-                    $attr,
-                    $type,
-                    5000, // FIXME: This should come from the model
-                    true // FIXME: This should come from the model
-                );
-            }
-        } catch (Throwable $ex) {
-            Console::error($ex);
-        }
+        $this->createTable($tableName, $model);
 
         try {
             $props = array_merge([
@@ -117,35 +101,74 @@ class SimpleORM implements ORM
                 new Document($props)
             );
 
-            $props = $doc->getAttributes();
-            $props['id'] = $doc->getId();
-
-            $clazz = $model::class;
-            return new $clazz(...$props);
-
+            return $this->docToClass($doc, $model::class);
         } catch (Throwable $ex) {
             Console::error($ex);
             throw $ex;
         }
     }
 
+    private function createTable(
+        string $tableName,
+        Model $model,
+    )
+    {
+        try {
+            if ($this->db->getCollection($tableName)->getId()) {
+                return;
+            }
+        } catch (Throwable $th) {
+            Console::error($th);
+        }
+
+        try {
+            $this->db->createCollection($tableName);
+            foreach ($model->getAttributes() as $attr => $val) {
+                $type = is_numeric($val)
+                    ? Database::VAR_INTEGER
+                    : Database::VAR_STRING;
+
+                $this->db->createAttribute(
+                    $tableName,
+                    $attr,
+                    $type,       // FIXME: This should come from the model
+                    5000,   // FIXME: This should come from the model
+                    true // FIXME: This should come from the model
+                );
+            }
+        } catch (Throwable $ex) {
+            Console::error($ex);
+        }
+    }
+
+    private function docToClass(Document $doc, string $class)
+    {
+        $props = $doc->getAttributes();
+        $props['id'] = $doc->getId();
+        return new $class(...$props);
+    }
+
     /**
      * @throws Exception
      */
-    public function update(
-        Model $model
-    ): Document
+    public function update(Model $model)
     {
-        $doc = $this->db->updateDocument(
-            self::toTableName($model::class),
+        $doc = $this->db->getDocument(
+            Strings::classToTableName($model::class),
             $model->getId(),
-            new Document($model->getAttributes())
         );
-        $props = $doc->getAttributes();
-        $props['id'] = $doc->getId();
 
-        $clazz = $model::class;
-        return new $clazz(...$props);
+        foreach ($model->getAttributes() as $attr => $val) {
+            $doc->setAttribute($attr, $val);
+        }
+
+        $doc = $this->db->updateDocument(
+            Strings::classToTableName($model::class),
+            $model->getId(),
+            $doc,
+        );
+
+        return $this->docToClass($doc, $model::class);
     }
 
     /**
@@ -157,7 +180,7 @@ class SimpleORM implements ORM
     ): bool
     {
         return $this->db->deleteDocument(
-            self::toTableName($class),
+            Strings::classToTableName($class),
             $id
         );
     }

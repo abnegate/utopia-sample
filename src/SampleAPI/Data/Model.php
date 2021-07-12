@@ -4,31 +4,22 @@ namespace SampleAPI\Data;
 
 use ArrayObject;
 use JetBrains\PhpStorm\ArrayShape;
+use SampleAPI\Strings;
 
 abstract class Model extends ArrayObject
 {
     protected $id;
     protected string $table;
-    protected string $jsonType;
 
     public function __construct()
     {
         parent::__construct([], self::ARRAY_AS_PROPS);
-        $this->table = strtolower($this::class);
-        $this->jsonType = $this::class;
+        $this->table = Strings::classToTableName($this::class);
     }
 
     public function __get($n)
     {
         return $this[$n];
-    }
-
-    /**
-     * @return string
-     */
-    public function getTable(): string
-    {
-        return $this->table;
     }
 
     #[ArrayShape([
@@ -43,7 +34,7 @@ abstract class Model extends ArrayObject
     {
         return [
             'id' => $this->getId(),
-            'type' => $this->getJsonType(),
+            'type' => $this->getTable(),
             'attributes' => $this->getAttributes()
         ];
     }
@@ -56,9 +47,9 @@ abstract class Model extends ArrayObject
     /**
      * @return string
      */
-    public function getJsonType(): string
+    public function getTable(): string
     {
-        return $this->jsonType;
+        return $this->table;
     }
 
     /**
@@ -80,7 +71,7 @@ abstract class Model extends ArrayObject
     {
         return [
             'id' => $id,
-            'type' => $this->getJsonType(),
+            'type' => $this->getTable(),
             'attributes' => $this->getAttributes()
         ];
     }
