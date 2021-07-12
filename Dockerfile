@@ -1,6 +1,13 @@
-FROM php:8.0-cli-alpine as ext
+FROM php:8.0-cli-alpine as base
 
-ENV PHP_SWOOLE_VERSION "v4.6.7"
+EXPOSE 8005
+
+ENV PHP_SWOOLE_VERSION="v4.6.7" \
+    _APP_DB_HOST="localhost" \
+    _APP_DB_PORT=3306 \
+    _APP_DB_USER="root" \
+    _APP_DB_PASS="val" \
+    _APP_DB_SCHEMA="test"
 
 RUN apk upgrade --update \
     && apk add --no-cache --virtual .build-deps \
@@ -19,22 +26,35 @@ RUN git clone --depth 1 --branch "${PHP_SWOOLE_VERSION}" https://github.com/swoo
   phpize && \
   ./configure --enable-http2 && \
   make && make install && \
-  cd .. \
+  cd ..
 
-RUN pecl install mongodb redis \
-    && docker-php-ext-enable swoole mongodb redis
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql
 
-FROM ext as build
+RUN pecl install \
+    mongodb \
+    redis
+
+RUN docker-php-ext-enable \
+    swoole \
+    pdo \
+    pdo_mysql \
+    mongodb \
+    redis
+
+FROM base as build
 RUN curl -sS https://getcomposer.org/installer | \
     php -- --install-dir=/usr/bin --filename=composer
-
-COPY composer.json composer.lock ./
+COPY composer.json .
+COPY composer.lock .
 RUN composer install
 
-FROM ext as final
-COPY --from=build ./vendor ./
-COPY app ./app
-ENTRYPOINT ["php", "app/app.php"]
+FROM base as final
+COPY --from=build /vendor vendor
+COPY src src
+COPY app app
+ENTRYPOINT ["php", "app/api.php"]
 
 
 
