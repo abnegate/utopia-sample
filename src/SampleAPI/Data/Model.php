@@ -2,24 +2,23 @@
 
 namespace SampleAPI\Data;
 
-use ArrayObject;
 use JetBrains\PhpStorm\ArrayShape;
 use SampleAPI\Strings;
 
-abstract class Model extends ArrayObject
+/**
+ * Represents a database entity.
+ *
+ * Class Model
+ * @package SampleAPI\Data
+ */
+abstract class Model
 {
     protected $id;
     protected string $table;
 
     public function __construct()
     {
-        parent::__construct([], self::ARRAY_AS_PROPS);
         $this->table = Strings::classToTableName($this::class);
-    }
-
-    public function __get($n)
-    {
-        return $this[$n];
     }
 
     #[ArrayShape([
@@ -39,12 +38,19 @@ abstract class Model extends ArrayObject
         ];
     }
 
+    /**
+     * Get the unique ID for this model.
+     *
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
     /**
+     * Get the table name for this model.
+     *
      * @return string
      */
     public function getTable(): string
@@ -53,12 +59,19 @@ abstract class Model extends ArrayObject
     }
 
     /**
-     * Get an array of Model property keys and values.
+     * Get an array of the property keys and values for this model.
      *
      * @return array
      */
     public abstract function getAttributes(): array;
 
+    // TODO: Move this to a 'Serializer' interface
+    /**
+     * Get a JSONAPI representation of this model.
+     *
+     * @param $id
+     * @return array
+     */
     #[ArrayShape([
         'id' => 'object',
         'type' => 'string',

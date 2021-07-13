@@ -4,6 +4,8 @@ use Utopia\CLI\Console;
 use Utopia\Response;
 
 /**
+ * Handle a request exception
+ *
  * @throws Exception
  */
 function handleError(Throwable $ex, Response $response)

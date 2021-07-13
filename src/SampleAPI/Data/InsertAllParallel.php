@@ -2,21 +2,24 @@
 
 namespace SampleAPI\Data;
 
-use Utopia\Database\Database;
-
 trait InsertAllParallel
 {
-    public function __construct(
+
+    /**
+     * Insert all
+     *
+     * @param ORM $orm
+     * @param Model ...$models
+     */
+    public function insertAll(
         ORM $orm,
-        Database $db,
-        string $class,
         Model ...$models
     )
     {
-        Co\run(function () use ($db, $orm, $class, $models) {
+        Co\run(function () use ($orm, $models) {
             foreach ($models as $model) {
-                go(function () use ($db, $orm, $class, $model) {
-                    $orm->insert($class, $model);
+                go(function () use ($orm, $model) {
+                    $orm->insert($model);
                 });
             }
         });

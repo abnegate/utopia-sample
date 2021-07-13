@@ -57,6 +57,13 @@ class SimpleORM implements ORM
         return null;
     }
 
+    private function docToClass(Document $doc, string $class)
+    {
+        $props = $doc->getAttributes();
+        $props['id'] = $doc->getId();
+        return new $class(...$props);
+    }
+
     public function find(
         string $class,
         array $queries = [],
@@ -138,13 +145,6 @@ class SimpleORM implements ORM
         } catch (Throwable $ex) {
             Console::error($ex);
         }
-    }
-
-    private function docToClass(Document $doc, string $class)
-    {
-        $props = $doc->getAttributes();
-        $props['id'] = $doc->getId();
-        return new $class(...$props);
     }
 
     /**

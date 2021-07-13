@@ -15,7 +15,10 @@ include __DIR__ . '/../controller_base.php';
 
 const MB_AS_BYTES = 1048576;
 
-define("TABLE", Strings::classToTableName(Note::class));
+define(
+    "TABLE",
+    Strings::classToTableName(Note::class)
+);
 
 App::get('/v1/note')
     ->desc('Get all notes.')
@@ -154,7 +157,7 @@ App::patch('/v1/note/:noteId')
     ->groups([TABLE])
     ->param('noteId', null, new UID(), 'Note unique ID.')
     ->param('key', '', new Text(0), 'Attribute key.')
-    ->param('value', '', new Text(0), 'Atrribute value.')
+    ->param('value', '', new Text(0), 'Attribute value.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
@@ -167,6 +170,7 @@ App::patch('/v1/note/:noteId')
         ORM $orm,
     ) {
         /** @var Model $note */
+
         try {
             $note = $orm->findById(Note::class, $noteId);
         } catch (Exception $ex) {
@@ -185,7 +189,7 @@ App::patch('/v1/note/:noteId')
         try {
             $setter = 'set' . ucfirst($key);
             if (!method_exists($note, $setter)) {
-                throw new Exception("Failed setting ".$key." for ". );
+                throw new Exception("Failed patching note.");
             }
             $note->$setter($value);
             $orm->update($note);

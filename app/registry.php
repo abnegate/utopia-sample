@@ -9,7 +9,6 @@ use Utopia\Database\Database;
 use Utopia\Registry\Registry;
 
 $registry = new Registry();
-
 $registry->set('orm', function () use ($registry) {
     $dbHost = App::getEnv('_APP_DB_HOST', 'localhost');
     $dbPort = App::getEnv('_APP_DB_PORT', '3306');
@@ -25,10 +24,9 @@ $registry->set('orm', function () use ($registry) {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ]);
-    $database = new Database(
-        new MariaDB($pdo),
-        new Cache(new None())
-    );
+
+    $cache = new Cache(new None());
+    $database = new Database(new MariaDB($pdo), $cache);
     $database->setNamespace($dbScheme);
     $database->exists() || $database->create();
 

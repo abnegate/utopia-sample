@@ -2,8 +2,15 @@
 
 namespace SampleAPI\Model;
 
+use JetBrains\PhpStorm\ArrayShape;
 use SampleAPI\Data\Model;
 
+/**
+ * A Note model containing a title and body.
+ *
+ * Class Note
+ * @package SampleAPI\Model
+ */
 class Note extends Model
 {
     public function __construct(
@@ -16,6 +23,8 @@ class Note extends Model
     }
 
     /**
+     * Get the title of this note.
+     *
      * @return string
      */
     public function getTitle(): string
@@ -24,6 +33,8 @@ class Note extends Model
     }
 
     /**
+     * Set the tile fo this note.
+     *
      * @param string $title
      */
     public function setTitle(string $title): void
@@ -32,6 +43,8 @@ class Note extends Model
     }
 
     /**
+     * Get the body of this note.
+     *
      * @return string
      */
     public function getBody(): string
@@ -40,6 +53,8 @@ class Note extends Model
     }
 
     /**
+     * Set the body of this note.
+     *
      * @param string $body
      */
     public function setBody(string $body): void
@@ -47,6 +62,10 @@ class Note extends Model
         $this->body = $body;
     }
 
+    #[ArrayShape([
+        'title' => "string",
+        'body' => "string"
+    ])]
     public function getAttributes(): array
     {
         return [
