@@ -9,6 +9,7 @@ use Utopia\Database\Database;
 use Utopia\Registry\Registry;
 
 $registry = new Registry();
+
 $registry->set('orm', function () use ($registry) {
     $dbHost = App::getEnv('_APP_DB_HOST', 'localhost');
     $dbPort = App::getEnv('_APP_DB_PORT', '3306');

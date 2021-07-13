@@ -1,11 +1,9 @@
 <?php
 
-use SampleAPI\Data\Model;
 use SampleAPI\Data\ORM;
 use SampleAPI\Model\Note;
 use SampleAPI\Strings;
 use Utopia\App;
-use Utopia\Database\Document;
 use Utopia\Database\Validator\UID;
 use Utopia\Request;
 use Utopia\Response;
@@ -15,13 +13,15 @@ include __DIR__ . '/../controller_base.php';
 
 const MB_AS_BYTES = 1048576;
 
+const CLAZZ = Note::class;
+
 define(
     "TABLE",
-    Strings::classToTableName(Note::class)
+    Strings::classToTableName(CLAZZ)
 );
 
-App::get('/v1/note')
-    ->desc('Get all notes.')
+App::get('/v1/' . TABLE)
+    ->desc('Get all resource entities.')
     ->groups([TABLE])
     ->inject('request')
     ->inject('response')
@@ -31,100 +31,53 @@ App::get('/v1/note')
         Response $response,
         ORM $orm,
     ) {
-        try {
-            $notes = $orm->find(Note::class);
-        } catch (Throwable) {
-            $response->json(['data' => []]);
-            return;
-        }
-
-        if (!$notes) {
-            $response->json(['data' => []]);
-            return;
-        }
-
-        $jsonNotes = array_map(function (Note $item) {
-            return $item->getJSONAPI();
-        }, $notes);
-
-        $response->json([
-            'data' => $jsonNotes
-        ]);
+        get($orm, CLAZZ, $response);
     });
 
-App::get('/v1/note/:noteId')
-    ->desc('Get a note by ID.')
+App::get('/v1/' . TABLE . '/:id')
+    ->desc('Get a resource entity by ID.')
     ->groups([TABLE])
-    ->param('noteId', null, new UID(), 'Note unique ID.')
+    ->param('id', null, new UID(), 'Unique ID.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
     ->action(function (
-        $noteId,
+        $id,
         Request $request,
         Response $response,
         ORM $orm,
     ) {
-        /** @var Note $note */
-
-        try {
-            $note = $orm->findById(Note::class, $noteId);
-        } catch (Throwable $ex) {
-            handleError($ex, $response);
-            return;
-        }
-
-        if (!$note) {
-            handleError(
-                new Exception('Note with ID ' . $noteId . ' does not exist.'),
-                $response
-            );
-            return;
-        }
-
-        $response->json([
-            'data' => [$note->getJSONAPI()]
-        ]);
+        getById($orm, CLAZZ, $id, $response);
     });
 
-App::put('/v1/note/:noteId')
-    ->desc('Update a note.')
+App::put('/v1/' . TABLE . '/:id')
+    ->desc('Update a resource.')
     ->groups([TABLE])
-    ->param('noteId', null, new UID(), 'Note unique ID.')
+    ->param('id', null, new UID(), 'Note unique ID.')
+    // TODO: Get params from CLAZZ
     ->param('title', '', new Text(5000), 'Note title. Max length: 5000 chars.')
     ->param('body', '', new Text(MB_AS_BYTES), 'Note body. Max length: 1048576 chars.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
     ->action(function (
-        $noteId,
+        $id,
         string $title,
         string $body,
         Request $request,
         Response $response,
         ORM $orm,
     ) {
-        /** @var Note $note */
-
-        $note = $orm->findById(Note::class, $noteId);
-
-        if (!$note) {
-            $note = new Note($noteId, $title, $body);
-            $orm->insert($note);
-        } else {
-            $note->setTitle($title);
-            $note->setBody($body);
-            $orm->update($note);
-        }
-
-        $response->json([
-            'data' => [$note->getJSONAPI()]
-        ]);
+        put($orm, CLAZZ, $id, [
+            'title' => $title,
+            'body' => $body,
+        ], $response);
     });
 
-App::post('/v1/note')
-    ->desc('Add a new note.')
+App::post('/v1/' . TABLE)
+    ->desc('Add a new resource entity.')
     ->groups([TABLE])
+    // TODO: Get params from CLAZZ
     ->param('title', '', new Text(1024), 'Note title. Max length: 128 chars.')
     ->param('body', '', new Text(0), 'Note body.')
     ->inject('request')
@@ -137,91 +90,41 @@ App::post('/v1/note')
         Response $response,
         ORM $orm
     ) {
-        $note = new Note('', $title, $body);
-
-        try {
-            /** @var Document $noteDoc */
-            $noteDoc = $orm->insert($note);
-        } catch (Throwable $ex) {
-            handleError($ex, $response);
-            return;
-        }
-
-        $response->json([
-            'data' => [$note->getJSONAPIWithId($noteDoc->getId())]
-        ]);
+        post($orm, CLAZZ, [$title, $body], $response);
     });
 
-App::patch('/v1/note/:noteId')
-    ->desc('Update a note attribute.')
+App::patch('/v1/' . TABLE . '/:id')
+    ->desc('Update a resource entity attribute.')
     ->groups([TABLE])
-    ->param('noteId', null, new UID(), 'Note unique ID.')
+    ->param('id', null, new UID(), 'Unique ID.')
+    // TODO: Get params from CLAZZ
     ->param('key', '', new Text(0), 'Attribute key.')
     ->param('value', '', new Text(0), 'Attribute value.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
     ->action(function (
-        $noteId,
+        $id,
         string $key,
         string $value,
         Request $request,
         Response $response,
         ORM $orm,
     ) {
-        /** @var Model $note */
-
-        try {
-            $note = $orm->findById(Note::class, $noteId);
-        } catch (Exception $ex) {
-            handleError($ex, $response);
-            return;
-        }
-
-        if (!$note) {
-            handleError(
-                new Exception('Note with ID ' . $noteId . ' does not exist.'),
-                $response
-            );
-            return;
-        }
-
-        try {
-            $setter = 'set' . ucfirst($key);
-            if (!method_exists($note, $setter)) {
-                throw new Exception("Failed patching note.");
-            }
-            $note->$setter($value);
-            $orm->update($note);
-        } catch (Exception $ex) {
-            handleError($ex, $response);
-            return;
-        }
-
-        $response->json(['data' => [$note->getJSONAPI()]]);
+        patch($orm, CLAZZ, $id, $key, $value, $response);
     });
 
-App::delete('/v1/note/:noteId')
+App::delete('/v1/' . TABLE . '/:id')
     ->groups([TABLE])
-    ->param('noteId', '', new UID(), 'Note unique ID.')
+    ->param('id', '', new UID(), 'Unique ID.')
     ->inject('request')
     ->inject('response')
     ->inject('orm')
     ->action(function (
-        $noteId,
+        $id,
         Request $request,
         Response $response,
         ORM $orm,
     ) {
-        try {
-            $orm->delete(Note::class, $noteId);
-        } catch (Exception $ex) {
-            handleError(
-                new Exception("Delete failed.", previous: $ex),
-                $response
-            );
-            return;
-        }
-
-        $response->noContent();
+        delete($orm, CLAZZ, $id, $response);
     });
