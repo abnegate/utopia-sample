@@ -33,13 +33,12 @@ class SimpleORM implements ORM
     )
     {
         $doc = $this->findDoc($class, $id);
-        if (!$doc) {
+
+        if ($doc->isEmpty()) {
             return null;
         }
 
-        $props = $doc->getAttributes();
-        $props['id'] = $doc->getId();
-        return new $class(...$props);
+        return $this->docToClass($doc, $class);
     }
 
     private function findDoc(string $class, $id)
@@ -54,6 +53,8 @@ class SimpleORM implements ORM
         } catch (Throwable $ex) {
             Console::error($ex);
         }
+
+        return null;
     }
 
     public function find(
@@ -74,9 +75,7 @@ class SimpleORM implements ORM
         );
 
         return array_map(function (Document $doc) use ($class) {
-            $props = $doc->getAttributes();
-            $props['id'] = $doc->getId();
-            return new $class(...$props);
+            return $this->docToClass($doc, $class);
         }, $docs);
     }
 

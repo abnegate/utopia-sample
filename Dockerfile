@@ -6,7 +6,7 @@ ENV PHP_SWOOLE_VERSION="v4.6.7" \
     _APP_DB_HOST="localhost" \
     _APP_DB_PORT=3306 \
     _APP_DB_USER="root" \
-    _APP_DB_PASS="val" \
+    _APP_DB_PASS="" \
     _APP_DB_SCHEMA="test"
 
 RUN apk upgrade --update \

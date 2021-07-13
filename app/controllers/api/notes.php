@@ -3,8 +3,8 @@
 use SampleAPI\Data\Model;
 use SampleAPI\Data\ORM;
 use SampleAPI\Model\Note;
+use SampleAPI\Strings;
 use Utopia\App;
-use Utopia\CLI\Console;
 use Utopia\Database\Document;
 use Utopia\Database\Validator\UID;
 use Utopia\Request;
@@ -14,7 +14,8 @@ use Utopia\Validator\Text;
 include __DIR__ . '/../controller_base.php';
 
 const MB_AS_BYTES = 1048576;
-const TABLE = 'notes';
+
+define("TABLE", Strings::classToTableName(Note::class));
 
 App::get('/v1/note')
     ->desc('Get all notes.')
@@ -29,7 +30,7 @@ App::get('/v1/note')
     ) {
         try {
             $notes = $orm->find(Note::class);
-        } catch (Throwable $ex) {
+        } catch (Throwable) {
             $response->json(['data' => []]);
             return;
         }
@@ -182,7 +183,10 @@ App::patch('/v1/note/:noteId')
         }
 
         try {
-            $setter = 'set'.ucfirst($key);
+            $setter = 'set' . ucfirst($key);
+            if (!method_exists($note, $setter)) {
+                throw new Exception("Failed setting ".$key." for ". );
+            }
             $note->$setter($value);
             $orm->update($note);
         } catch (Exception $ex) {
@@ -208,7 +212,10 @@ App::delete('/v1/note/:noteId')
         try {
             $orm->delete(Note::class, $noteId);
         } catch (Exception $ex) {
-            handleError($ex, $response);
+            handleError(
+                new Exception("Delete failed.", previous: $ex),
+                $response
+            );
             return;
         }
 
