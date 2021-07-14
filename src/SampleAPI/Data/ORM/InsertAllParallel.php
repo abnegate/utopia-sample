@@ -1,6 +1,9 @@
 <?php
 
-namespace SampleAPI\Data;
+namespace SampleAPI\Data\ORM;
+
+use SampleAPI\Data\Model;
+use function Co\run;
 
 trait InsertAllParallel
 {
@@ -16,7 +19,7 @@ trait InsertAllParallel
         Model ...$models
     )
     {
-        Co\run(function () use ($orm, $models) {
+        run(function () use ($orm, $models) {
             foreach ($models as $model) {
                 go(function () use ($orm, $model) {
                     $orm->insert($model);

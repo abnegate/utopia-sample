@@ -4,7 +4,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require __DIR__ . '/../vendor/autoload.php';
 }
 
-use SampleAPI\Data\SimpleORM;
+
+use SampleAPI\Data\ORM\SimpleORM;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Http\Server;
@@ -56,7 +57,7 @@ $http->on('request', function (
 
     try {
         $app->run($request, $response);
-    } catch (Throwable) {
+    } catch (Throwable $ex) {
         $swooleResponse->end('500: Server Error');
     }
 });

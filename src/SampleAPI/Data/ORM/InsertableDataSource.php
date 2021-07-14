@@ -1,6 +1,8 @@
 <?php
 
-namespace SampleAPI\Data;
+namespace SampleAPI\Data\ORM;
+
+use SampleAPI\Data\Model;
 
 interface InsertableDataSource
 {

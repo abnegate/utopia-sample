@@ -1,6 +1,6 @@
 <?php
 
-use SampleAPI\Data\ORM;
+use SampleAPI\Data\ORM\ORM;
 use SampleAPI\Model\Note;
 use SampleAPI\Strings;
 use Utopia\App;

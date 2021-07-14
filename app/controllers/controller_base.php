@@ -1,7 +1,7 @@
 <?php
 
 use SampleAPI\Data\Model;
-use SampleAPI\Data\ORM;
+use SampleAPI\Data\ORM\ORM;
 use Utopia\CLI\Console;
 use Utopia\Database\Document;
 use Utopia\Response;

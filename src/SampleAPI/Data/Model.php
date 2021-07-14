@@ -66,6 +66,7 @@ abstract class Model
     public abstract function getAttributes(): array;
 
     // TODO: Move this to a 'Serializer' interface
+
     /**
      * Get a JSONAPI representation of this model.
      *

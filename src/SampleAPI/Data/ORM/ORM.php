@@ -1,6 +1,6 @@
 <?php
 
-namespace SampleAPI\Data;
+namespace SampleAPI\Data\ORM;
 
 interface ORM extends
     SearchableDataSource,

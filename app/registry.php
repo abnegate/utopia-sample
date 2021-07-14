@@ -1,6 +1,6 @@
 <?php
 
-use SampleAPI\Data\SimpleORM;
+use SampleAPI\Data\ORM\SimpleORM;
 use Utopia\App;
 use Utopia\Cache\Adapter\None;
 use Utopia\Cache\Cache;

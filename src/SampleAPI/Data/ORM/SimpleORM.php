@@ -1,8 +1,10 @@
 <?php
 
-namespace SampleAPI\Data;
+namespace SampleAPI\Data\ORM;
 
 use Exception;
+use SampleAPI\Data\Model;
+use SampleAPI\Data\SortOrder;
 use SampleAPI\Strings;
 use Throwable;
 use Utopia\CLI\Console;
