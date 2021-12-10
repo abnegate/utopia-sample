@@ -12,13 +12,14 @@
   "require": {
     "ext-pdo": "*",
     "ext-swoole": "*",
-    "utopia-php/framework": "^0.14.1",
-    "utopia-php/database": "^0.4.0",
-    "utopia-php/config": "^0.2.2",
-    "utopia-php/registry": "^0.5.0",
-    "utopia-php/swoole": "^0.2.4",
-    "utopia-php/preloader": "^0.2.4",
-    "utopia-php/cli": "^0.11.0"
+    "utopia-php/framework": "0.19.*",
+    "utopia-php/database": "0.12.*",
+    "utopia-php/config": "0.2.*",
+    "utopia-php/registry": "0.5.*",
+    "utopia-php/swoole": "0.3.*",
+    "utopia-php/preloader": "0.2.*",
+    "utopia-php/cli": "0.11.*",
+    "webonyx/graphql-php": "14.10.*"
   },
   "autoload": {
     "psr-4": {

@@ -69,8 +69,42 @@ class Note extends Model
     public function getAttributes(): array
     {
         return [
-            'title' => $this->title,
-            'body' => $this->body,
+            'title' => [
+                'value' => $this->title,
+                'type' => 'string',
+                'required' => true,
+                'array' => false,
+                'size' => 128,
+            ],
+            'body' => [
+                'value' => $this->body,
+                'type' => 'string',
+                'required' => true,
+                'array' => false,
+                'size' => 4096,
+            ],
+        ];
+    }
+
+    public function getAttributesValues(): array
+    {
+        return [
+            'title' => [
+                'description' => 'The title of the note.',
+                'value' => $this->title,
+                'type' => 'string',
+                'required' => true,
+                'array' => false,
+                'size' => 128,
+            ],
+            'body' => [
+                'description' => 'The body of the note.',
+                'value' => $this->body,
+                'type' => 'string',
+                'required' => true,
+                'array' => false,
+                'size' => 4096,
+            ],
         ];
     }
 }

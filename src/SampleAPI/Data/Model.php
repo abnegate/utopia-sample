@@ -31,10 +31,16 @@ abstract class Model
     ])]
     public function getJSONAPI(): array
     {
+        $attr = $this->getAttributes();
+
         return [
             'id' => $this->getId(),
             'type' => $this->getTable(),
-            'attributes' => $this->getAttributes()
+            'attributes' => \array_walk( $attr,
+                function (string &$key, $value) {
+                    $key = $value['value'];
+                }
+            ),
         ];
     }
 
@@ -65,6 +71,25 @@ abstract class Model
      */
     public abstract function getAttributes(): array;
 
+
+    /**
+     * Get an array of the property keys and values for this model.
+     *
+     * @return array
+     */
+    public function getAttributesValues(): array
+    {
+        $attr = $this->getAttributes();
+
+        \array_walk( $attr,
+            function (string &$key, $value) {
+                $key = $value['value'];
+            }
+        );
+
+        return $attr;
+    }
+
     // TODO: Move this to a 'Serializer' interface
 
     /**
@@ -83,10 +108,12 @@ abstract class Model
     ])]
     public function getJSONAPIWithId($id): array
     {
+        $attr = $this->getAttributes();
+
         return [
             'id' => $id,
             'type' => $this->getTable(),
-            'attributes' => $this->getAttributes()
+            'attributes' => $this->getAttributesValues(),
         ];
     }
 }

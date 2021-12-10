@@ -1,7 +1,5 @@
 FROM php:8.0-cli-alpine as base
 
-EXPOSE 8005
-
 ENV PHP_SWOOLE_VERSION="v4.6.7" \
     _APP_DB_HOST="localhost" \
     _APP_DB_PORT=3306 \
@@ -52,9 +50,10 @@ RUN composer install
 
 FROM base as final
 COPY --from=build /vendor vendor
-COPY src src
-COPY app app
+COPY src /src
+COPY app /app
+COPY bin /usr/local/bin
+
+EXPOSE 80
+
 ENTRYPOINT ["php", "app/api.php"]
-
-
-

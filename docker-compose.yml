@@ -2,32 +2,58 @@ version: '3'
 
 services:
 
-  api:
+  traefik:
+    image: traefik:2.5
+    container_name: traefik
+    command:
+      - --log.level=DEBUG
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`,`sampleapi`)
+      - --entrypoints.sampleapi_web.address=:80
+      - --entrypoints.sampleapi_websecure.address=:443
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+    networks:
+      - gateway
+      - appwrite
+
+  rest-api:
+    entrypoint: rest
+    container_name: rest-api
     build: .
-    secrets:
-      - db-password
     depends_on:
       - db
     ports:
-      - 8005:8005
+      - "8001:80"
+    env_file:
+      - .env
+
+  graphql-api:
+    entrypoint: graphql
+    container_name: graphql-api
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8002:80"
     env_file:
       - .env
 
   db:
     image: mariadb
     restart: always
-    secrets:
-      - db-password
     volumes:
       - db-data:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
     expose:
       - 3306
 
 volumes:
   db-data:
-
-secrets:
-  db-password:
-    file: db/password.txt

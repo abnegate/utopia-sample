@@ -102,7 +102,7 @@ class SimpleORM implements ORM
                 '$read' => ['role:all'],
                 '$write' => ['role:all'],
                 '$collection' => $tableName,
-            ], $model->getAttributes());
+            ], $model->getAttributesValues());
 
             $doc = $this->db->createDocument(
                 $tableName,
@@ -131,17 +131,14 @@ class SimpleORM implements ORM
 
         try {
             $this->db->createCollection($tableName);
-            foreach ($model->getAttributes() as $attr => $val) {
-                $type = is_numeric($val)
-                    ? Database::VAR_INTEGER
-                    : Database::VAR_STRING;
 
+            foreach ($model->getAttributes() as $name => $attribute) {
                 $this->db->createAttribute(
                     $tableName,
-                    $attr,
-                    $type,       // FIXME: This should come from the model
-                    5000,   // FIXME: This should come from the model
-                    true // FIXME: This should come from the model
+                    $name,
+                    $attribute['type'],
+                    $attribute['size'],
+                    $attribute['required'] ?? false,
                 );
             }
         } catch (Throwable $ex) {
@@ -159,8 +156,8 @@ class SimpleORM implements ORM
             $model->getId(),
         );
 
-        foreach ($model->getAttributes() as $attr => $val) {
-            $doc->setAttribute($attr, $val);
+        foreach ($model->getAttributes() as $name => $attribute) {
+            $doc->setAttribute($name, $attribute['value']);
         }
 
         $doc = $this->db->updateDocument(

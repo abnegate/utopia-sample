@@ -4,8 +4,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require __DIR__ . '/../vendor/autoload.php';
 }
 
-
 use SampleAPI\Data\ORM\SimpleORM;
+use SampleAPI\GraphQL\SchemaBuilder;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Http\Server;
@@ -26,10 +26,11 @@ App::error(function (Throwable $error) {
     Console::error(json_encode($error));
 });
 
-$http = new Server('0.0.0.0', App::getEnv('_APP_PORT', 8005));
+$http = new Server('0.0.0.0', App::getEnv('_APP_PORT', 80));
 
 $http->on('start', function (Server $http) {
     Console::log('Stop with Ctrl+C');
+
     Process::signal(2, function () use ($http) {
         $http->shutdown();
     });
@@ -46,13 +47,20 @@ $http->on('request', function (
     /** @var SimpleORM $orm */
 
     $app = new App('Pacific/Auckland');
+
     $orm = $registry->get('orm');
 
     App::setResource('app', function () use (&$app) {
         return $app;
     });
+
     App::setResource('orm', function () use (&$orm) {
         return $orm;
+    });
+
+    App::setResource('schema', function () use (&$app, &$orm) {
+        $schema = SchemaBuilder::buildModelSchema($app);
+
     });
 
     try {

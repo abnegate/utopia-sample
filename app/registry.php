@@ -1,6 +1,7 @@
 <?php
 
 use SampleAPI\Data\ORM\SimpleORM;
+use SampleAPI\GraphQL\SchemaBuilder;
 use Utopia\App;
 use Utopia\Cache\Adapter\None;
 use Utopia\Cache\Cache;
