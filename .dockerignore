@@ -1,6 +1,7 @@
 *
 
 !app
+!bin
 !src
 !composer.json
 !composer.lock

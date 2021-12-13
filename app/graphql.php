@@ -4,8 +4,10 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require __DIR__ . '/../vendor/autoload.php';
 }
 
-use SampleAPI\Data\ORM\SimpleORM;
+use SampleAPI\Data\ORM\ORM;
 use SampleAPI\GraphQL\SchemaBuilder;
+use SampleAPI\GraphQL\ReferenceDataResolver;
+use SampleAPI\GraphQL\ReferenceTypeResolver;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
 use Swoole\Http\Server;
@@ -43,28 +45,52 @@ $http->on('request', function (
     $request = new Utopia\Swoole\Request($swooleRequest);
     $response = new Utopia\Swoole\Response($swooleResponse);
 
-    /** @var App $app */
-    /** @var SimpleORM $orm */
+    /** @var App $graphql */
+    /** @var ORM $orm */
 
-    $app = new App('Pacific/Auckland');
-
+    $graphql = new App('Pacific/Auckland');
+    $typeResolver = new ReferenceTypeResolver();
+    $dataResolver = new ReferenceDataResolver($typeResolver);
+    $schemaBuilder = new SchemaBuilder($typeResolver, $dataResolver);
     $orm = $registry->get('orm');
 
-    App::setResource('app', function () use (&$app) {
-        return $app;
+    App::setResource('graphql', function () use ($graphql) {
+        return $graphql;
     });
 
-    App::setResource('orm', function () use (&$orm) {
+    App::setResource('orm', function () use ($orm) {
         return $orm;
     });
 
-    App::setResource('schema', function () use (&$app, &$orm) {
-        $schema = SchemaBuilder::buildModelSchema($app);
+    App::setResource('registry', function () use ($registry) {
+        return $registry;
+    });
 
+    App::setResource('schemaBuilder', function () use ($schemaBuilder) {
+        return $schemaBuilder;
+    });
+
+    App::setResource('baseSchema', function () use ($graphql, $schemaBuilder, $registry) {
+        $schema = $registry->get('schema');
+
+        if (isset($schema)) {
+            return $schema;
+        }
+
+        $schema = $schemaBuilder->buildModelSchema(
+            $graphql->getRoutes(),
+            $graphql->getResource('injections')
+        );
+
+        $dbSchema = $schemaBuilder->buildDatabaseSchema();
+
+        $registry->set('schema', static fn() => $schema);
+
+        return $schema;
     });
 
     try {
-        $app->run($request, $response);
+        $graphql->run($request, $response);
     } catch (Throwable $ex) {
         $swooleResponse->end('500: Server Error');
     }

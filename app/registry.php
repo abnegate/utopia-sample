@@ -11,7 +11,7 @@ use Utopia\Registry\Registry;
 
 $registry = new Registry();
 
-$registry->set('orm', function () use ($registry) {
+$registry->set('database', function() use ($registry) {
     $dbHost = App::getEnv('_APP_DB_HOST', 'localhost');
     $dbPort = App::getEnv('_APP_DB_PORT', '3306');
     $dbUser = App::getEnv('_APP_DB_USER', 'root');
@@ -31,6 +31,13 @@ $registry->set('orm', function () use ($registry) {
     $database = new Database(new MariaDB($pdo), $cache);
     $database->setNamespace($dbScheme);
     $database->exists() || $database->create();
+
+    return $database;
+});
+
+$registry->set('orm', function () use ($registry) {
+    $database = $registry->get('database');
+    $dbScheme = App::getEnv('_APP_DB_SCHEMA', 'sample');
 
     return new SimpleORM($database, $dbScheme);
 });

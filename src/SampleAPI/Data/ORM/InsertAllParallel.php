@@ -15,7 +15,7 @@ trait InsertAllParallel
      * @param Model ...$models
      */
     public function insertAll(
-        ORM $orm,
+        ORM   $orm,
         Model ...$models
     )
     {

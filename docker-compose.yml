@@ -11,8 +11,8 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedByDefault=false
       - --providers.docker.constraints=Label(`traefik.constraint-label-stack`,`sampleapi`)
-      - --entrypoints.sampleapi_web.address=:80
-      - --entrypoints.sampleapi_websecure.address=:443
+      - --entrypoints.sampleapi_http.address=:80
+      - --entrypoints.sampleapi_https.address=:443
       - --accesslog=true
     ports:
       - "80:80"
@@ -23,7 +23,7 @@ services:
       - db
     networks:
       - gateway
-      - appwrite
+      - sampleapi
 
   rest-api:
     entrypoint: rest
@@ -31,6 +31,22 @@ services:
     build: .
     depends_on:
       - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.constraint-label-stack=sampleapi"
+      - "traefik.docker.network=sampleapi"
+      - "traefik.http.services.sampleapi_rest.loadbalancer.server.port=80"
+      #http
+      - traefik.http.routers.sampleapi_rest_http.entrypoints=sampleapi_http
+      - traefik.http.routers.sampleapi_rest_http.rule=PathPrefix(`/`)
+      - traefik.http.routers.sampleapi_rest_http.service=sampleapi_rest
+      # https
+      - traefik.http.routers.sampleapi_rest_https.entrypoints=sampleapi_https
+      - traefik.http.routers.sampleapi_rest_https.rule=PathPrefix(`/`)
+      - traefik.http.routers.sampleapi_rest_https.service=sampleapi_rest
+      - traefik.http.routers.sampleapi_rest_https.tls=true
+    networks:
+      - sampleapi
     ports:
       - "8001:80"
     env_file:
@@ -42,6 +58,22 @@ services:
     build: .
     depends_on:
       - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.constraint-label-stack=sampleapi"
+      - "traefik.docker.network=sampleapi"
+      - "traefik.http.services.sampleapi_graphql.loadbalancer.server.port=80"
+      #http
+      - traefik.http.routers.sampleapi_graphql_http.entrypoints=sampleapi_http
+      - traefik.http.routers.sampleapi_graphql_http.rule=PathPrefix(`/`)
+      - traefik.http.routers.sampleapi_graphql_http.service=sampleapi_graphql
+      # https
+      - traefik.http.routers.sampleapi_graphql_https.entrypoints=sampleapi_https
+      - traefik.http.routers.sampleapi_graphql_https.rule=PathPrefix(`/`)
+      - traefik.http.routers.sampleapi_graphql_https.service=sampleapi_graphql
+      - traefik.http.routers.sampleapi_graphql_https.tls=true
+    networks:
+      - sampleapi
     ports:
       - "8002:80"
     env_file:
@@ -52,8 +84,19 @@ services:
     restart: always
     volumes:
       - db-data:/var/lib/mysql
-    expose:
-      - 3306
+    networks:
+      - sampleapi
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=${_APP_DB_SCHEMA}
+      - MYSQL_USER=${_APP_DB_USER}
+      - MYSQL_PASSWORD=${_APP_DB_PASS}
+
+networks:
+  gateway:
+  sampleapi:
 
 volumes:
   db-data:

@@ -4,7 +4,6 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require __DIR__ . '/../vendor/autoload.php';
 }
 
-
 use SampleAPI\Data\ORM\SimpleORM;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
@@ -42,23 +41,27 @@ $http->on('request', function (
     $request = new Utopia\Swoole\Request($swooleRequest);
     $response = new Utopia\Swoole\Response($swooleResponse);
 
-    /** @var App $app */
+    /** @var App $rest */
     /** @var SimpleORM $orm */
 
-    $app = new App('Pacific/Auckland');
+    $rest = new App('Pacific/Auckland');
 
     $orm = $registry->get('orm');
 
-    App::setResource('app', function () use (&$app) {
-        return $app;
+    App::setResource('rest', function () use ($rest) {
+        return $rest;
     });
 
-    App::setResource('orm', function () use (&$orm) {
+    App::setResource('orm', function () use ($orm) {
         return $orm;
     });
 
+    App::setResource('registry', function () use ($registry) {
+        return $registry;
+    });
+
     try {
-        $app->run($request, $response);
+        $rest->run($request, $response);
     } catch (Throwable $ex) {
         $swooleResponse->end('500: Server Error');
     }

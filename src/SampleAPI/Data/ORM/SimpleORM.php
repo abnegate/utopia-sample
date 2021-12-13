@@ -74,10 +74,10 @@ class SimpleORM implements ORM
         int $order = SortOrder::ASCENDING
     ): array
     {
-        $tableName = Strings::classToTableName($class);
+        $table = Strings::classToTableName($class);
 
         $docs = $this->db->find(
-            $tableName,
+            $table,
             $queries,
             $count,
             $offset,
@@ -93,19 +93,19 @@ class SimpleORM implements ORM
      */
     public function insert(Model $model)
     {
-        $tableName = Strings::classToTableName($model::class);
+        $table = Strings::classToTableName($model::class);
 
-        $this->createTable($tableName, $model);
+        $this->createTable($table, $model);
 
         try {
             $props = array_merge([
                 '$read' => ['role:all'],
                 '$write' => ['role:all'],
-                '$collection' => $tableName,
+                '$collection' => $table,
             ], $model->getAttributesValues());
 
             $doc = $this->db->createDocument(
-                $tableName,
+                $table,
                 new Document($props)
             );
 
@@ -151,8 +151,10 @@ class SimpleORM implements ORM
      */
     public function update(Model $model)
     {
+        $table = Strings::classToTableName($model::class);
+
         $doc = $this->db->getDocument(
-            Strings::classToTableName($model::class),
+            $table,
             $model->getId(),
         );
 
@@ -161,7 +163,7 @@ class SimpleORM implements ORM
         }
 
         $doc = $this->db->updateDocument(
-            Strings::classToTableName($model::class),
+            $table,
             $model->getId(),
             $doc,
         );
@@ -177,8 +179,10 @@ class SimpleORM implements ORM
         $id
     ): bool
     {
+        $table = Strings::classToTableName($class);
+
         return $this->db->deleteDocument(
-            Strings::classToTableName($class),
+            $table,
             $id
         );
     }
